@@ -1,0 +1,14 @@
+package app.repositories;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import app.entity.LoadingStation;
+import app.entity.Stall;
+import app.entity.Student;
+
+@Repository
+public interface UserRepository extends JpaRepository<Student, Long> 
+{
+	public Student findByNumberId(String idNumber);
+}

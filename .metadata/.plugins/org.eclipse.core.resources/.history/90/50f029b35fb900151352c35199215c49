@@ -1,0 +1,33 @@
+package app.components;
+
+import java.io.*;
+
+import javax.annotation.PostConstruct;
+import javax.swing.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import app.entity.Student;
+
+import java.util.*;
+
+@Component
+public class Admin 
+{
+    public boolean checkUser(String username)
+    {
+        try
+        {
+            Student s = studentDao.findByNumberId(idNum);
+            return s.checkIdNumber(idNum);
+        }
+        catch(Exception e)
+        {
+            return false;
+        }
+        
+    }
+   
+}

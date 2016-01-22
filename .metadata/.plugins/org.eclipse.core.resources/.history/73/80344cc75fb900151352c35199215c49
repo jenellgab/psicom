@@ -1,0 +1,194 @@
+package app.entity;
+
+import java.io.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+@Entity
+public class User implements Serializable
+{
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column
+    private Long id;
+
+	@Column
+	@NotNull(message="Student name must not be null")
+    private String studentName;
+	
+	
+	@Column
+	@NotNull(message="ID number must not be null")
+	@Size(min=6, max=6)
+    private String numberId;
+	
+	@Column
+	@NotNull(message="Mobile number must not be null")
+	@Pattern(regexp="63(\\d{10})", message="Owner number must follow 63yyyXXXXXXX format")
+    private String cellphone;
+	
+	@Column
+    private double currentBalance;
+	
+	@JoinColumn(name="loading_station")
+	@ManyToOne(fetch=FetchType.LAZY)
+	private LoadingStation ls;
+
+	
+	public LoadingStation getLs() {
+		return ls;
+	}
+
+
+
+	public void setLs(LoadingStation ls) {
+		this.ls = ls;
+	}
+
+
+
+	public String getStudentName() {
+		return studentName;
+	}
+
+
+
+	public void setStudentName(String studentName) {
+		this.studentName = studentName;
+	}
+
+
+
+	public String getIdNumber() {
+		return numberId;
+	}
+
+
+
+	public void setIdNumber(String idNumber) {
+		this.numberId = idNumber;
+	}
+
+
+
+	public String getCellphone() {
+		return cellphone;
+	}
+
+
+
+	public void setCellphone(String cellphone) {
+		this.cellphone = cellphone;
+	}
+
+
+    /**
+     * Checks if ID number is valid. If true,
+     * retrieves and returns the balance of current account
+     */
+    public double getCurrentBalance( String idNumber ) 
+    {
+        if ( !checkIdNumber( idNumber ) )
+        {
+            return Double.NaN;
+        }
+        
+        return this.currentBalance;
+    }
+    public double getCurrentBalance() {
+		return currentBalance;
+	}
+
+
+	public void setCurrentBalance(double currentBalance) {
+		this.currentBalance = currentBalance;
+	}
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public User(){
+		
+	}
+	
+	/**
+     * Registers student.
+     */
+    public User(String initStudentName, String initIdNumber, String initCellphone, double initCurrentBalance)
+    {
+        this.studentName = initStudentName;
+        this.numberId = initIdNumber;
+        this.cellphone = initCellphone;
+        this.currentBalance = initCurrentBalance;
+    }
+       
+    /**
+     * Checks if ID number is valid.
+     */
+    public boolean checkIdNumber(String idNumber)
+    {
+        return idNumber.equals( this.numberId );
+    }
+    
+    
+    public boolean buy(String idn, double amount){
+        if (!checkIdNumber(idn))
+        {
+            return false;
+        }
+        
+        if((amount <= 0) || (amount > this.currentBalance))
+        {
+            return false;
+        }
+        else
+        {
+            this.currentBalance -= amount;
+            return true;
+        }
+        
+    }
+    
+    public boolean load(double amount){
+        if ( !checkIdNumber( numberId ) )
+        {
+            return false;
+        }
+        
+        if ( (amount < 0) )
+        {
+            return false;
+        }
+        else
+        {
+            this.currentBalance += amount;
+            return true;
+        }
+    }
+    
+    
+    @Override
+	public String toString() {
+		return "Account [Id Number =" + numberId + ", Student Name =" + studentName
+				+ ", Cellphone =" + cellphone + ", Current Balance =" + currentBalance + "]";
+	}
+
+
+    
+    
+}

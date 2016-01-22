@@ -1,0 +1,10 @@
+package app;
+
+import javax.swing.tree.RowMapper;
+
+public class UserMapper implements RowMapper<User>{
+	public u mapRow(ResultSet rs, int rowNum) throws SQLException{
+		
+	}
+	
+}

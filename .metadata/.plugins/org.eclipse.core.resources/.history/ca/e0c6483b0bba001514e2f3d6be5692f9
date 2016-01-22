@@ -1,0 +1,8 @@
+package app;
+
+public class UserMapper implements RowMapper<User>{
+	public u mapRow(ResultSet rs, int rowNum) throws SQLException{
+		
+	}
+	
+}

@@ -1,0 +1,219 @@
+package app.components;
+
+import java.io.*;
+
+import javax.annotation.PostConstruct;
+import javax.swing.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import app.entity.LoadingStation;
+import app.entity.Owner;
+import app.entity.Stall;
+import app.entity.Student;
+import app.repositories.LoadingStationRepository;
+import app.repositories.OwnerRepository;
+import app.repositories.StallRepository;
+import app.repositories.StudentRepository;
+
+import java.util.*;
+
+@Component
+public class Admin 
+{
+   
+    @Autowired
+    private StallRepository stallDao;
+    
+    @Autowired
+    private StudentRepository studentDao;
+    
+    @Autowired
+    private OwnerRepository ownerDao;
+    
+    @Autowired
+    private LoadingStationRepository loadDao;
+    
+    @PostConstruct
+    public void init(){
+    	
+    }
+    
+    public boolean checkLS(String n)
+    {
+        try
+        {
+            LoadingStation s = loadDao.findByLoadingAreaName(n);
+            return true;
+        }
+        catch(Exception e)
+        {
+            return false;
+        }
+        
+    }
+  
+    public boolean regLoadStation(String name){
+    	LoadingStation ls = new LoadingStation();
+    	ls.setLoadingAreaName(name);
+    	loadDao.save(ls);
+    	
+    	return ls.getId()!= null;
+    }
+    
+    public boolean checkStudent(String idNum)
+    {
+        try
+        {
+            Student s = studentDao.findByNumberId(idNum);
+            return s.checkIdNumber(idNum);
+        }
+        catch(Exception e)
+        {
+            return false;
+        }
+        
+    }
+    
+  
+    /**
+     * Register Student.
+     */
+    public boolean regStudent(String name, String idNumber, double balance, String cp)
+    {
+    	Student s = new Student();
+    	s.setStudentName(name);
+    	s.setIdNumber(idNumber);
+    	s.setCellphone(cp);
+    	s.setCurrentBalance(balance);
+    	s = studentDao.save(s);
+    	
+    	return s.getId()!= null;
+    	
+    }
+
+    
+	/**
+	 * Removes an existing student.
+	 **/ 
+    public boolean removeStudent(String idNumber)
+    {
+    	try{
+	        Student s = studentDao.findByNumberId(idNumber);
+	        studentDao.delete(s);
+	        return true;
+    	}
+    	catch(Exception e){
+    		e.printStackTrace();
+    		return false;
+    	}
+    }
+    
+    public boolean checkOwner(String name)
+    {
+        try
+        {
+            Owner o = ownerDao.findByOwnerName(name);
+            return o.checkOwnName(name);
+        }
+        catch(Exception e)
+        {
+            return false;
+        }
+        
+    }
+    
+    public String getOwnerCellNo(String name){
+    	Owner o = ownerDao.findByOwnerName(name);
+    	return o.getOwnerNumber();
+    }
+
+    /**
+     * Register Owner.
+     */
+    @Transactional
+    public boolean regOwner(String name, String cp, String stall)
+    {
+    	Owner o = new Owner();
+    	o.setOwnerName(name);
+    	o.setOwnerNumber(cp);
+    	o.setStallName(stall);
+    	
+    	ownerDao.save(o);
+    	
+    	Stall s = stallDao.findByStallName(stall);
+    	s.addOwner(o);
+    	s = stallDao.save(s);
+    	
+    	
+    	
+    	return o.getId()!= null;
+    	
+    }
+    
+	/**
+	 * Removes an existing owner.
+	 **/ 
+    public boolean removeOwner(String name)
+    {
+    	try{
+	        Owner o = ownerDao.findByOwnerName(name);
+	        ownerDao.delete(o);
+	        return true;
+    	}
+    	catch(Exception e){
+    		e.printStackTrace();
+    		return false;
+    	}
+    }
+    
+    public boolean checkStall(String sName)
+    {
+        try
+        {
+            Stall s = stallDao.findByStallName(sName);
+            return s.checkStaName(sName);
+        }
+        catch(Exception e)
+        {
+            return false;
+        }
+        
+    }
+    
+    /**
+     * Creates a new stall.
+     */
+    public boolean createStall(String name)
+    {
+    	Stall s = new Stall();
+    	s.setStallName(name);
+    	s.setProfit(0.0);
+    	    	
+    	s = stallDao.save(s);
+    	
+    	return s.getId()!= null;
+    	
+    }
+    
+    
+	/**
+	 * Removes an existing stall.
+	 **/ 
+    public boolean removeStall(String name)
+    {
+    	try{
+	        Stall s = stallDao.findByStallName(name);
+	        stallDao.delete(s);
+	        return true;
+    	}
+    	catch(Exception e){
+    		e.printStackTrace();
+    		return false;
+    	}
+    }
+
+   
+}

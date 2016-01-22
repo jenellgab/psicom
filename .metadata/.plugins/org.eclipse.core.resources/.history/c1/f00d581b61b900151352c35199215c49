@@ -1,0 +1,51 @@
+package app.components;
+
+import java.io.*;
+
+import javax.annotation.PostConstruct;
+import javax.swing.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import app.entity.Student;
+import app.entity.User;
+import app.repositories.UserRepository;
+
+import java.util.*;
+
+@Component
+public class Admin 
+{
+	
+	@Autowired
+	private UserRepository userDao;
+	
+	
+    public boolean checkUser(String username)
+    {
+        try
+        {
+            User u = userDao.findByUsername(username);
+            return u.checkUsername(username);
+        }
+        catch(Exception e)
+        {
+            return false;
+        }
+        
+    }
+    
+    public boolean addUser(String username, String password, String password2)
+    {
+    	User u = new User();
+    	u.setUsername(username);
+    	u.setPassword(password);
+    	s = studentDao.save(s);
+    	
+    	return s.getId()!= null;
+    	
+    }
+   
+}
